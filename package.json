@@ -1,0 +1,26 @@
+{
+  "name": "new-brooker-hood",
+  "version": "1.0.0",
+  "description": "Society management app (NoBrokerHood / MyGate clone) using MERN Stack",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ausumnlabs/new-brooker-hood.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ausumnlabs/new-brooker-hood/issues"
+  },
+  "homepage": "https://github.com/ausumnlabs/new-brooker-hood#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.3"
+  }
+}
