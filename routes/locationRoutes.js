@@ -1,96 +1,103 @@
 const express = require("express");
+
+// ----------- All 18 Models -------------
+const AmmenitiesBooking = require("../models/ammenties_booking");
+const CityProject = require("../models/City_Project");
 const City = require("../models/City");
-const Society = require("../models/Society");
-const Tower = require("../models/Tower");
-const Flat = require("../models/Flat");
-const Residence = require("../models/Residence");
-const Vehicle = require("../models/Vehicle");
+const DailyHelpAssignment = require("../models/daily_help_assignmet");
+const DirectoryContacts = require("../models/Directory_contacts");
+const EmergencyNumber = require("../models/emergency_number");
+const FlatDailyHelp = require("../models/flat_daily_help");
+const FlatResidencesMovedOut = require("../models/Flat_Residences_movedOut");
+const Flats = require("../models/Flats_id");
+const LocalDirectory = require("../models/Local_directory");
+const NewUserOnboarding = require("../models/new_user_onboarding");
+const ProjectTowers = require("../models/project_towers");
+const SocietyAmmenities = require("../models/society_ammenities");
+const SocietyHelpDeskTicket = require("../models/society_help_desk_ticket");
+const SocietyMember = require("../models/society_member");
+const SocietyStaff = require("../models/society_staff");
+const TicketResponseSheet = require("../models/Ticket_response_sheet");
+const Vehicle = require("../models/vehicle_search");
 
 const router = express.Router();
 
+// -------🔥 CRUD ROUTES FOR ALL MODELS 🔥--------
 
-// ➤ Create City
-router.post("/city", async (req, res) => {
-  try {
-    const city = new City({ name: req.body.name });
-    await city.save();
-    res.json(city);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+function genericCrud(name, Model) {
+  // CREATE
+  router.post(`/${name}`, async (req, res) => {
+    try {
+      const doc = new Model(req.body);
+      await doc.save();
+      res.json(doc);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-// ➤ Create Society inside City
-router.post("/society", async (req, res) => {
-  try {
-    const society = new Society({
-      name: req.body.name,
-      cityId: req.body.cityId
-    });
-    await society.save();
-    res.json(society);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+  // GET ALL
+  router.get(`/${name}`, async (req, res) => {
+    try {
+      const docs = await Model.find();
+      res.json(docs);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-// ➤ Create Tower inside Society
-router.post("/tower", async (req, res) => {
-  try {
-    const tower = new Tower({
-      name: req.body.name,
-      societyId: req.body.societyId
-    });
-    await tower.save();
-    res.json(tower);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+  // GET ONE
+  router.get(`/${name}/:id`, async (req, res) => {
+    try {
+      const doc = await Model.findById(req.params.id);
+      if (!doc) return res.status(404).json({ error: "Not found" });
+      res.json(doc);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-// ➤ Create Flat inside Tower
-router.post("/flat", async (req, res) => {
-  try {
-    const flat = new Flat({
-      flatNumber: req.body.flatNumber,
-      towerId: req.body.towerId
-    });
-    await flat.save();
-    res.json(flat);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+  // UPDATE
+  router.put(`/${name}/:id`, async (req, res) => {
+    try {
+      const doc = await Model.findByIdAndUpdate(req.params.id, req.body, { new: true });
+      if (!doc) return res.status(404).json({ error: "Not found" });
+      res.json(doc);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 
-// ➤ Create Residence inside Flat
-router.post("/residence", async (req, res) => {
-  try {
-    const residence = new Residence({
-      residentName: req.body.residentName,
-      flatId: req.body.flatId,
-      ownerType: req.body.ownerType,
-      occupyStatus: req.body.occupyStatus
-    });
-    await residence.save();
-    res.json(residence);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+  // DELETE
+  router.delete(`/${name}/:id`, async (req, res) => {
+    try {
+      const doc = await Model.findByIdAndDelete(req.params.id);
+      if (!doc) return res.status(404).json({ error: "Not found" });
+      res.json({ msg: "Deleted" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+}
 
-// ➤ Add Vehicle to Residence
-router.post("/vehicle", async (req, res) => {
-  try {
-    const vehicle = new Vehicle({
-      type: req.body.type,
-      numberPlate: req.body.numberPlate,
-      residenceId: req.body.residenceId
-    });
-    await vehicle.save();
-    res.json(vehicle);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// --------- Add CRUD endpoints for each model -------------
+genericCrud('ammenties_booking', AmmenitiesBooking);
+genericCrud('city_project', CityProject);
+genericCrud('city', City);
+genericCrud('daily_help_assignment', DailyHelpAssignment);
+genericCrud('directory_contacts', DirectoryContacts);
+genericCrud('emergency_number', EmergencyNumber);
+genericCrud('flat_daily_help', FlatDailyHelp);
+genericCrud('flat_residences_movedout', FlatResidencesMovedOut);
+genericCrud('flats', Flats);
+genericCrud('local_directory', LocalDirectory);
+genericCrud('new_user_onboarding', NewUserOnboarding);
+genericCrud('project_towers', ProjectTowers);
+genericCrud('society_ammenities', SocietyAmmenities);
+genericCrud('society_help_desk_ticket', SocietyHelpDeskTicket);
+genericCrud('society_member', SocietyMember);
+genericCrud('society_staff', SocietyStaff);
+genericCrud('ticket_response_sheet', TicketResponseSheet);
+genericCrud('vehicle', Vehicle);
 
 module.exports = router;
